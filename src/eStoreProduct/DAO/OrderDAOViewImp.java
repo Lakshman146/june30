@@ -23,7 +23,7 @@ public class OrderDAOViewImp implements OrderDAOView {
 	private final JdbcTemplate jdbcTemplate;
 	private final RowMapper<OrdersViewModel> ordersMapper;
 	private static final Logger logger = 
-			LoggerFactory.getLogger(customerOrderController.class);
+			LoggerFactory.getLogger(OrderDAOViewImp.class);
 
 
 	public OrderDAOViewImp(DataSource dataSource) {
