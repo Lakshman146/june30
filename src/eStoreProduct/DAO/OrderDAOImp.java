@@ -28,7 +28,7 @@ import eStoreProduct.utility.ProductStockPrice;
 public class OrderDAOImp implements OrderDAO {
 	JdbcTemplate jdbcTemplate;
 	private static final Logger logger = 
-			LoggerFactory.getLogger(customerOrderController.class);
+			LoggerFactory.getLogger(OrderDAOImp.class);
 
 	@Autowired
 	public OrderDAOImp(javax.sql.DataSource dataSource) {
