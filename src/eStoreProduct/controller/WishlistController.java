@@ -35,7 +35,7 @@ public class WishlistController {
 	@ResponseBody
 	public String addToWishlist(@RequestParam(value = "productId", required = true) int productId, Model model,
 			HttpSession session) throws NumberFormatException, SQLException {
-		logger.info("adding product to wishlist");
+		logger.info("eStoreProduct:WishlistController::adding product to wishlist");
 
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 		wishlistdao.addToWishlist(productId, cust.getCustId());
@@ -47,7 +47,7 @@ public class WishlistController {
 	@ResponseBody
 	public String removeFromWishlist(@RequestParam(value = "productId", required = true) int productId, Model model,
 			HttpSession session) throws NumberFormatException, SQLException {
-		logger.info("Removing  product from wishlist");
+		logger.info("eStoreProduct:WishlistController::Removing  product from wishlist");
 
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 		wishlistdao.removeFromWishlist(productId, cust.getCustId());
@@ -57,7 +57,7 @@ public class WishlistController {
 	// method to display the wishlist items
 	@RequestMapping("/wishlistItems")
 	public String userWishlistItems(Model model, HttpSession session) throws NumberFormatException, SQLException {
-		logger.info("when user clicks on wishlist button Displaying the items from wishlist");
+		logger.info("eStoreProduct:WishlistController::when user clicks on wishlist button Displaying the items from wishlist");
 
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		List<ProductStockPrice> products = wishlistdao.getWishlistProds(cust1.getCustId());
