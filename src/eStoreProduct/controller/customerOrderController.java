@@ -1,7 +1,8 @@
 package eStoreProduct.controller;
 
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import eStoreProduct.model.custCredModel;
 
 @Controller
 public class customerOrderController {
+	private static final Logger logger = LoggerFactory.getLogger(customerOrderController.class);
 
 	@Autowired
 	private OrderDAOView orderdaov;
@@ -27,6 +29,7 @@ public class customerOrderController {
 	@RequestMapping("/CustomerOrdersProfile")
 	// Method to show ordered products of the user
 	public String showOrders(Model model, HttpSession session) {
+				logger.info("eStoreProduct:customerOrderController::showing the customers orders profile");
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 		// Getting ordered products from the DAO
 		List<OrdersViewModel> orderProducts = orderdaov.getorderProds(cust.getCustId());
@@ -38,6 +41,7 @@ public class customerOrderController {
 	// Getting the details of the specific product when clicked on it
 	@GetMapping("/productDetails")
 	public String getProductDetails(@RequestParam("id") int productId, Model model, HttpSession session) {
+	logger.info("eStoreProduct:customerOrderController::products details of ordered product");	
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 		OrdersViewModel product = orderdaov.OrdProductById(cust.getCustId(), productId);
 		model.addAttribute("product", product);
@@ -48,6 +52,7 @@ public class customerOrderController {
 	@PostMapping("/cancelOrder")
 	@ResponseBody
 	public String cancelOrder(@RequestParam("orderproId") Integer productId, @RequestParam("orderId") int orderId) {
+		logger.info("eStoreProduct:customerOrderController::cancelling the ordered ITEM");
 		// Cancelling order in the orderproducts table and updating the status
 		orderdaov.cancelorderbyId(productId, orderId);
 
@@ -66,13 +71,15 @@ public class customerOrderController {
 	@RequestMapping(value = "/trackOrder", method = RequestMethod.GET)
 	@ResponseBody
 	public String trackOrder(@RequestParam("orderproId") int productId, @RequestParam("orderId") int orderId) {
+	logger.info("eStoreProduct:customerOrderController::tracking the ordered product");
 		// Retrieve the shipment status for the given order ID
 		String shipmentStatus = orderdaov.getShipmentStatus(productId, orderId);
 		return shipmentStatus;
 	}
 
 	@RequestMapping(value = "/sortorders", method = RequestMethod.POST)
-	public String sortProducts(@RequestParam("sortOrder") String sortOrder, Model model, HttpSession session) {
+	public String sortProducts(@RequestParam("sortOrder") String sortOrder, Model model, HttpSession session) 
+	logger.info("eStoreProduct:customerOrderController::sort the products based on selecting sorting option");
 		// Sort the products based on the selected sorting option
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 		List<OrdersViewModel> ordersList = orderdaov.getorderProds(cust.getCustId());
