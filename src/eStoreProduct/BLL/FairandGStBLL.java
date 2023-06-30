@@ -3,7 +3,8 @@ package eStoreProduct.BLL;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -20,6 +21,7 @@ public class FairandGStBLL {
 	cartDAO cartimp;
 	List<ProductStockPrice> products = null;
 	List<ProductStockPrice> product2 = null;
+	private static final Logger logger = LoggerFactory.getLogger(FairandGStBLL.class);
 
 	@Autowired
 	public FairandGStBLL(ProductDAO productdao, cartDAO ca) {
@@ -27,8 +29,9 @@ public class FairandGStBLL {
 		cartimp = ca;
 	}
 
-	// method to get cart cost total
+	// method to get  cart products total cost
 	public double getCartCost(int id) {
+logger.info("eStoreProduct:FairandGStBLL::getting cart products total cost");
 		double cartcost = 0.0;
 		List<ProductStockPrice> cproducts = cartimp.getCartProds(id);
 		for (ProductStockPrice p : cproducts) {
@@ -39,6 +42,7 @@ public class FairandGStBLL {
 
 	// method returns the totalcost of cart products
 	public double getCartCost(List<ProductStockPrice> al) {
+	logger.info("eStoreProduct:FairandGStBLL::returns the totalcost of cart products");
 		double cost = 0.0;
 		for (ProductStockPrice p : al) {
 			cost += p.getPrice() * p.getQuantity();
@@ -47,6 +51,7 @@ public class FairandGStBLL {
 	}
 
 	public double getOrderGST(List<ProductStockPrice> al) {
+	logger.info("eStoreProduct:FairandGStBLL::returns getOrderGST");
 		double gst = 0.0;
 		for (ProductStockPrice ps : al) {
 			gst += (ps.getGst() * ps.getPrice()) / 100;
@@ -56,7 +61,7 @@ public class FairandGStBLL {
 
 	// method to calculate the total fair for single buying product
 	public ProductStockPrice individualTotalfair(custCredModel cust, int pid, int qty) {
-
+               	logger.info("eStoreProduct:FairandGStBLL::calculation for gsts");
 		String spin = cust.getCustSpincode();
 		int spincode = Integer.parseInt(spin);
 		// retrieve the ServiceableRegion for surcharge and pricewaiver
@@ -82,6 +87,7 @@ public class FairandGStBLL {
 
 	// method to calculate and set GSTS for each product
 	public void setgsts(ProductStockPrice p, String spin) {
+	    logger.info("eStoreProduct:FairandGStBLL::calculate the gst,cgst,igst,sgst and set to respective product object");
 		double salecost = p.getPrice();
 		System.out.println("In bll=gstc_id=" + p.getProd_gstc_id());
 		// retrieve the gst,sgst,cgst,igst percentages based on product hsn code
@@ -124,6 +130,7 @@ public class FairandGStBLL {
 
 	// method to calculate the TotalFair of buying products
 	public void calculateTotalfair(custCredModel cust) {
+	logger.info("eStoreProduct:FairandGStBLL::calculation for totalfair of buying products");
 		double pr = 0.0;
 		product2 = cartimp.getCartProds(cust.getCustId());
 		String spin = cust.getCustSpincode();
@@ -148,6 +155,7 @@ public class FairandGStBLL {
 
 	// method to calculate the surcharge of each product
 	public void calculatesurcharge(List<ProductStockPrice> products, double totalprice, ServiceableRegion rgn) {
+	logger.info("eStoreProduct:FairandGStBLL::calculating the surcharge and shipping charges");
 		double shipcharge = 0.0, wholeshipmentprice = 0.0, shipgst = 0.0;
 		// to find the total shipment charge
 		if (totalprice >= 0 && totalprice <= 1000) {
@@ -180,6 +188,7 @@ public class FairandGStBLL {
 
 	// method to return the products list that list contains the total gsts & surcharge calculation
 	public List<ProductStockPrice> GetQtyItems2() {
+	logger.info("eStoreProduct:FairandGStBLL::return the products list which was contains the calculated gsts and surcharges");
 		return product2;
 	}
 }
