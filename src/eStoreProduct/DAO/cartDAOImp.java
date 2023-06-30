@@ -39,7 +39,7 @@ public class cartDAOImp implements cartDAO {
 
 	// method to add the product to customet cart
 	public String addToCart(int productId, int customerId) {
-		logger.info("adding product to cart table in database");
+		logger.info("eStoreProduct:cartDAOImp::adding product to cart table in database");
 
 		List<ProductStockPrice> cproducts = jdbcTemplate.query(select_checkcart_products,
 				new CartProductRowMapper(prodStockDAO), customerId, productId);
@@ -64,7 +64,7 @@ public class cartDAOImp implements cartDAO {
 
 	// method to remove item from cart
 	public int removeFromCart(int productId, int customerId) {
-		logger.info("Deleting product from cart table");
+		logger.info("eStoreProduct:cartDAOImp::Deleting product from cart table");
 
 		int r = jdbcTemplate.update(delete_slam_cart, customerId, productId);
 		if (r > 0) {
@@ -77,7 +77,7 @@ public class cartDAOImp implements cartDAO {
 
 	// method to get all cart products
 	public List<ProductStockPrice> getCartProds(int cust_id) {
-		logger.info("Retriving all products from cart");
+		logger.info("eStoreProduct:cartDAOImp::Retriving all products from cart");
 
 		System.out.println(cust_id + " from model");
 		try {
@@ -94,7 +94,7 @@ public class cartDAOImp implements cartDAO {
 
 	// update the quantity
 	public int updateQty(cartModel cm) {
-		logger.info("updating the quantity of  product in cart table");
+		logger.info("eStoreProduct:cartDAOImp::updating the quantity of  product in cart table");
 		int r = jdbcTemplate.update(update_qty, cm.getQty(), cm.getCid(), cm.getPid());
 		if (r > 0) {
 			System.out.println("updated in cart");
@@ -115,7 +115,7 @@ public class cartDAOImp implements cartDAO {
 
 	// get gsts by respective hsncode
 	public HSNCodeModel getHSNCodeByProductId(int prodId) {
-		logger.info("getting the gsts based on the product hsn_code from data base");
+		logger.info("eStoreProduct:cartDAOImp::getting the gsts based on the product hsn_code from data base");
 
 		String sql = "SELECT hsn_code, sgst, igst, cgst, gst " + "FROM slam_HSN_Code " + "WHERE hsn_code = ?";
 
@@ -132,7 +132,7 @@ public class cartDAOImp implements cartDAO {
 
 	// method to get the servicable regions data
 	public ServiceableRegion getRegionByPincode(int pincode) {
-		logger.info("based on pincode get the surcharges and pricewaivers data from regions table ");
+		logger.info("eStoreProduct:cartDAOImp::based on pincode get the surcharges and pricewaivers data from regions table ");
 
 		String query = "SELECT * FROM slam_regions WHERE ? BETWEEN region_pin_from AND region_pin_to";
 
