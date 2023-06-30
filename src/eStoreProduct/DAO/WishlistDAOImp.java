@@ -38,7 +38,7 @@ public class WishlistDAOImp implements WishlistDAO {
 
 	// method to add product to wishlist
 	public int addToWishlist(int productId, int customerId) {
-		logger.info("adding product to wishlist table");
+		logger.info("eStoreProduct:WishlistDAOImp:adding product to wishlist table");
 
 		int r = jdbcTemplate.update(insert_slam_wishlist, customerId, productId);
 		if (r > 0) {
@@ -50,7 +50,7 @@ public class WishlistDAOImp implements WishlistDAO {
 
 	// method to remove product to wishlist
 	public int removeFromWishlist(int productId, int customerId) {
-		logger.info("Deleting product from wishlist table");
+		logger.info("eStoreProduct:WishlistDAOImp:Deleting product from wishlist table");
 
 		int r = jdbcTemplate.update(delete_slam_wishlist, customerId, productId);
 		if (r > 0) {
@@ -63,7 +63,7 @@ public class WishlistDAOImp implements WishlistDAO {
 
 	// method to retrieve the all wishlist products
 	public List<ProductStockPrice> getWishlistProds(int cust_id) {
-		logger.info(" method to retrieve the all wishlist products");
+		logger.info("eStoreProduct:WishlistDAOImp: method to retrieve the all wishlist products");
 
 		List<ProductStockPrice> cproducts = null;
 		try {
