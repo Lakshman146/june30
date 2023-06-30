@@ -56,7 +56,7 @@ public class CartController {
 	public String addToCart(@RequestParam(value = "productId", required = true) int productId, Model model,
 			HttpSession session) throws NumberFormatException, SQLException {
 
-		logger.info("adding product to cart");
+		logger.info("eStoreProduct:CartController:adding product to cart");
 
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		if (cust1 != null) {
@@ -79,7 +79,7 @@ public class CartController {
 	// display the cart items controller method and Forward to the cart.jsp vie
 	@RequestMapping(value = "/cartDisplay", method = RequestMethod.GET)
 	public String getSignUpPage(Model model, HttpSession session) {
-		logger.info("Displaying  products from cart");
+		logger.info("eStoreProduct:CartController:Displaying  products from cart");
 
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 		if (cust != null) {
@@ -104,7 +104,7 @@ public class CartController {
 	@RequestMapping(value = "/signOk", method = RequestMethod.GET)
 	public String getHomeFinal(@RequestParam("em") String email, @RequestParam("ps") String psd, Model model,
 			HttpSession session) {
-		logger.info("if user sign in");
+		logger.info("eStoreProduct:CartController:if user sign in");
 
 		// Retrieve the products ArrayList from the model
 		custCredModel cust = cdao.getCustomer(email, psd);
@@ -138,7 +138,7 @@ public class CartController {
 	@ResponseBody
 	public String removeFromCart(@RequestParam(value = "productId", required = true) int productId, Model model,
 			HttpSession session) throws NumberFormatException, SQLException {
-		logger.info("removing  product from cart");
+		logger.info("eStoreProduct:CartController:removing  product from cart");
 
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		if (cust1 != null) {
@@ -164,11 +164,12 @@ public class CartController {
 	public String updateQuantity(@RequestParam(value = "productId", required = true) int productId,
 			@RequestParam(value = "quantity", required = true) int quantity, Model model, HttpSession session)
 			throws NumberFormatException, SQLException {
-		logger.info("updating the quantity of cart products");
+		logger.info("eStoreProduct:CartController:updating the quantity of cart products");
 
 		double cartcost = 0.0;
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		if (cust1 != null) {
+		logger.info("eStoreProduct:CartController:updating the quantity of cart products if user login");
 			cartModel cart = new cartModel(cust1.getCustId(), productId, quantity);
 			cartimp.updateQty(cart);
 			List<ProductStockPrice> products = cartimp.getCartProds(cust1.getCustId());
@@ -177,6 +178,7 @@ public class CartController {
 			String ccost = String.valueOf(cartcost);
 			return ccost;
 		} else {
+		logger.info("eStoreProduct:CartController:updating the quantity of cart products if user not login");
 			for (ProductStockPrice product : alist) {
 				if (product.getProd_id() == productId) {
 					product.setQuantity(quantity);
@@ -191,9 +193,8 @@ public class CartController {
 	@PostMapping("/updateCostOnLoad")
 	@ResponseBody
 	public String updateCostOnLoad(Model model, HttpSession session) throws NumberFormatException, SQLException {
-		logger.info("In cart update the cost of cart items");
-
-		double cartcost = 0.0;
+		logger.info("eStoreProduct:CartController:In cart update the cost of cart items");
+           double cartcost = 0.0;
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		if (cust1 != null) {
 			List<ProductStockPrice> products = cartimp.getCartProds(cust1.getCustId());
@@ -212,7 +213,7 @@ public class CartController {
 	@ResponseBody
 	public String checkPincodeValidity(@RequestParam(value = "pincode", required = true) String pincode, Model model,
 			HttpSession session) throws NumberFormatException, SQLException {
-		logger.info("Checking the pincode Availability");
+		logger.info("eStoreProduct:CartController:Checking the pincode Availability");
 
 		return sdao.getValidityOfPincode(Integer.parseInt(pincode)) + "";
 
