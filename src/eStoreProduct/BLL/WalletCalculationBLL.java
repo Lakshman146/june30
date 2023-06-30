@@ -18,9 +18,9 @@ public class WalletCalculationBLL {
 		double walletlimitused = 0.8;
 
 		walletlimitused = walletlimitused * orderprice;
-		if (walletlimitused < walletamt) {
+		if ((walletamt != 0&&walletlimitused < walletamt) {
 			amttopay = orderprice - walletlimitused;
-		} else if (walletlimitused >= walletamt) {
+		} else if ((walletamt != 0&&walletlimitused >= walletamt) {
 			amttopay = orderprice - walletamt;
 
 		}
