@@ -12,6 +12,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,6 +27,9 @@ import eStoreProduct.utility.ProductStockPrice;
 @Repository
 public class OrderDAOImp implements OrderDAO {
 	JdbcTemplate jdbcTemplate;
+	private static final Logger logger = 
+			LoggerFactory.getLogger(customerOrderController.class);
+
 	@Autowired
 	public OrderDAOImp(javax.sql.DataSource dataSource) {
 		jdbcTemplate = new JdbcTemplate(dataSource);
@@ -36,6 +42,7 @@ public class OrderDAOImp implements OrderDAO {
 	@Override
 	@Transactional
 	public void insertOrder(orderModel order) {
+		logger.info("eStoreProduct:OrderDAOImp:insert order method");
 		entityManager.persist(order);
 	}
 	private String ins = "INSERT INTO slam_orders (ordr_cust_id, ordr_billno, ordr_odate, ordr_total, ordr_gst, ordr_payreference, ordr_paymode, ordr_paystatus, ordr_saddress, ordr_shipment_status,ordr_shipment_date,ordr_spincode) VALUES (?, ?, CURRENT_TIMESTAMP,?, ?, ?, ?, ?, ?, ?, CURRENT_DATE + INTERVAL '5 days',?) RETURNING ordr_id";
@@ -45,6 +52,7 @@ public class OrderDAOImp implements OrderDAO {
 	@Override
 	@Transactional
 	public List<orderModel> getAllOrders() {
+		logger.info("eStoreProduct:OrderDAOImp:method to get all the orders placed");
 		Session currentSession = entityManager.unwrap(Session.class);
 		CriteriaBuilder criteriaBuilder = currentSession.getCriteriaBuilder();
 		CriteriaQuery<orderModel> criteriaQuery = criteriaBuilder.createQuery(orderModel.class);
@@ -58,6 +66,7 @@ public class OrderDAOImp implements OrderDAO {
 	@Override
 	@Transactional
 	public void updateOrderProcessedBy(Long orderId, Integer processedBy) {
+		logger.info("eStoreProduct:OrderDAOImp:method to update the order processed by which admin");
 		// Retrieve the order entity based on the order ID
 		orderModel order = entityManager.find(orderModel.class, orderId);
 
@@ -74,7 +83,8 @@ public class OrderDAOImp implements OrderDAO {
 	@Override
 	@Transactional
 	public List<orderModel> loadOrdersByDate(Timestamp startDate, Timestamp endDate) {
-		System.out.println("loading");
+		logger.info("eStoreProduct:OrderDAOImp:load all the orders placed in the dates selected");
+		//System.out.println("loading");
 		Session currentSession = entityManager.unwrap(Session.class);
 		CriteriaBuilder criteriaBuilder = currentSession.getCriteriaBuilder();
 		CriteriaQuery<orderModel> criteriaQuery = criteriaBuilder.createQuery(orderModel.class);
@@ -89,6 +99,7 @@ public class OrderDAOImp implements OrderDAO {
 	@Override
 	@Transactional
 	public void updateOrderShipmentStatus(int orderId, String status) {
+		logger.info("eStoreProduct:OrderDAOImp:update the shipment status of the order placed");
 		// Retrieve the order entity based on the order ID
 		orderModel order = entityManager.find(orderModel.class, orderId);
 
@@ -105,6 +116,7 @@ public class OrderDAOImp implements OrderDAO {
 	
 	@Override
 	public void insertIntoOrders(orderModel or, List<ProductStockPrice> al) {
+		logger.info("eStoreProduct:OrderDAOImp:insert into orders and ordersplaced tables when order is placed ");
 		KeyHolder keyHolder = new GeneratedKeyHolder();
 		jdbcTemplate.update(con -> {
 			PreparedStatement ps = con.prepareStatement(ins, Statement.RETURN_GENERATED_KEYS);
