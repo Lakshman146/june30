@@ -8,6 +8,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
@@ -33,6 +36,8 @@ public class ProductDAOImp implements ProductDAO {
 	// p.prod_id = ps.prod_id and ps.prod_id=?";
 	private String get_prd = "SELECT p.prod_id, p.prod_title, p.prod_brand, p.image_url, p.prod_desc,p.prod_gstc_id, ps.prod_price FROM slam_Products p, slam_productstock ps where p.prod_id = ps.prod_id and ps.prod_id=?";
 	private ProdStockDAO prodStockDAO;
+	private static final Logger logger = 
+			LoggerFactory.getLogger(ProductDAOImp.class);
 
 	@Autowired
 	public ProductDAOImp(DataSource dataSource, ProdStockDAO prodStockDAO) {
@@ -41,7 +46,9 @@ public class ProductDAOImp implements ProductDAO {
 	}
 
 	@Override
+	//method to add a product
 	public boolean createProduct(Product p) {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:adding a new product");
 		int p_id = jdbcTemplate.queryForObject(SQL_GET_TOP_PRODID, int.class);
 		p_id = p_id + 1;
 		System.out.println(p_id + "product_id\n");
@@ -52,8 +59,9 @@ public class ProductDAOImp implements ProductDAO {
 				p.getProd_gstc_id(), p.getProd_brand(), p.getImage_url(), p.getProd_desc(), p.getReorderLevel()) > 0;
 	}
 
+	//method to get products based on the category selected
 	public List<ProductStockPrice> getProductsByCategory(Integer category_id) {
-
+		logger.info("eStoreProduct:DAO:ProductDAOImp:getting the products based on the category selected");
 		System.out.println("in pdaoimp cid   " + category_id);
 		List<ProductStockPrice> p = jdbcTemplate.query(get_products_by_catg, new ProductRowMapper(prodStockDAO),
 				category_id);
@@ -61,27 +69,29 @@ public class ProductDAOImp implements ProductDAO {
 		return p;
 	}
 
+	//method to get all the products
 	public List<ProductStockPrice> getAllProducts() {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:getting all the products");
 		return jdbcTemplate.query(products_query, new ProductRowMapper(prodStockDAO));
 	}
 
+	//method to get all the categories available
 	public List<Category> getAllCategories() {
+		logger.info("eStoreProduct:DAO:ProductDAOImp: getting all the categories available");
 		return jdbcTemplate.query(prdt_catg, new CategoryRowMapper());
 	}
 
+	//method to get product by id
 	public ProductStockPrice getProductById(Integer productId) {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:getting product by id");
 		List<ProductStockPrice> products = jdbcTemplate.query(get_prd, new ProductRowMapper(prodStockDAO), productId);
 		return products.isEmpty() ? null : products.get(0);
 	}
 
 	@Override
-	public List<String> getAllProductCategories() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
+		//method to get the products according to the sorting selected
 	public List<ProductStockPrice> sortProductsByPrice(List<ProductStockPrice> productList, String sortOrder) {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:getting the products according to the sorting selected");
 		// System.out.println("pdaoimp class sortbyprice method");
 
 		if (sortOrder.equals("lowToHigh")) {
@@ -94,8 +104,10 @@ public class ProductDAOImp implements ProductDAO {
 	}
 
 	@Override
+	//method to get products based on the price range selected
 	public List<ProductStockPrice> filterProductsByPriceRange(List<ProductStockPrice> filteredProducts, double minPrice,
 			double maxPrice) {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:getting products based on the price range selected");
 		List<ProductStockPrice> res = new ArrayList<>();
 		for (ProductStockPrice product : filteredProducts) {
 			if (product.getPrice() >= minPrice && product.getPrice() <= maxPrice) {
@@ -106,14 +118,18 @@ public class ProductDAOImp implements ProductDAO {
 		return res;
 	}
 
+	//method to check the pincode 
 	public boolean isPincodeValid(int pincode) {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:checking the availability for the pincode");
 		String query = "SELECT COUNT(*) FROM slam_regions WHERE ? BETWEEN region_pin_from AND region_pin_to";
 		int count = jdbcTemplate.queryForObject(query, Integer.class, pincode);
 		return count > 0;
 	}
 
 	@Override
+	//method to get the product gst hsn code
 	public int getproductgstcid(int pid) {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:getting the product gst hsn code");
 		String sql = "SELECT prod_gstc_id FROM slam_products WHERE prod_id = ?";
 		Integer prodGstcId = jdbcTemplate.queryForObject(sql, new Object[] { pid }, Integer.class);
 
@@ -122,7 +138,9 @@ public class ProductDAOImp implements ProductDAO {
 	}
 
 	@Override
+	//method to get the products available in the search done
 	public List<ProductStockPrice> searchproducts(String search) {
+		logger.info("eStoreProduct:DAO:ProductDAOImp:getting the products available in the search done");
 		String query = "SELECT p.*, ps.prod_price FROM slam_Products p JOIN slam_productstock ps ON p.prod_id = ps.prod_id "
 				+ "WHERE p.prod_title ILIKE '%' || ? || '%' OR p.prod_desc ILIKE '%' || ? || '%' OR p.prod_brand ILIKE '%' || ? || '%'";
 		List<ProductStockPrice> products = jdbcTemplate.query(query, new ProductRowMapper(prodStockDAO), search, search,
