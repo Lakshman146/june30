@@ -32,7 +32,7 @@ public class homeController {
 	// url mapping for home page
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String getHomePage(Model model) {
-	logger.info("calling the home view page");
+	logger.info("eStoreProduct:homeController:calling the home view page");
 		// call the view
 		return "home";
 	}
@@ -40,7 +40,7 @@ public class homeController {
 	// url mapping for logged in user to get back to home
 	@RequestMapping(value = "/loggedIn", method = RequestMethod.GET)
 	public String getHomeFoeLoggedUser(Model model) {
-	logger.info("after sign in getting the home view page");
+	logger.info("eStoreProduct:homeController:after sign in getting the home view page");
 		// setting flag variable to maintain status and add to model
 		flag = true;
 		model.addAttribute("fl", flag);
@@ -51,7 +51,7 @@ public class homeController {
 	// url mapping to open signup page for new customer
 	@RequestMapping(value = "/signUp", method = RequestMethod.GET)
 	public String getSignUpPage(Model model) {
-		logger.info("calling the signup view page");
+		logger.info("eStoreProduct:homeController:calling the signup view page");
 		// call the view
 		return "signUp";
 	}
@@ -59,7 +59,7 @@ public class homeController {
 	// url mapping to open signin page
 	@RequestMapping(value = "/signIn", method = RequestMethod.GET)
 	public String getSignInPage(Model model) {
-	logger.info("calling the signin view page");
+	logger.info("eStoreProduct:homeController:calling the signin view page");
 		// call the view
 		return "signIn";
 	}
@@ -67,7 +67,7 @@ public class homeController {
 	// url mapping when customer completed the signup form
 	@RequestMapping(value = "/signInCreateAccount", method = RequestMethod.POST)
 	public String createAccount(@Validated custCredModel ccm, Model model) {
-	logger.info("Adding the new Customer to data base");
+	logger.info("eStoreProduct:homeController:Adding the new Customer to data base");
 		// add customer to database
 		boolean b = cdao.createCustomer(ccm);
 		// set it to the model
@@ -81,7 +81,7 @@ public class homeController {
 	// url mapping to redirect to home page by changing login status
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String userlogout(Model model, HttpSession session) {
-		logger.info("user logout");
+		logger.info("eStoreProduct:homeController:user logout");
 		// get the logged in session customer
 		// change the login status and add to model
 		flag = false;
