@@ -1,4 +1,6 @@
 package eStoreProduct.controller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,6 +16,7 @@ import eStoreProduct.model.emailSend;
 
 @Controller
 public class ForgotController {
+	private static final Logger logger = LoggerFactory.getLogger(ForgotController.class);
 
 	String generateotp;
 	String finalemail;
@@ -28,6 +31,8 @@ public class ForgotController {
 	//url mapping to open forgot password page
 	@RequestMapping(value = "/forgotPassword", method = RequestMethod.GET)
 	public String forgotPassword(Model model) {
+		  logger.info("estoreproduct:ForgotController:: forgot the password ");
+
 		// call the view
 		return "forgotPage";
 	}
@@ -35,6 +40,8 @@ public class ForgotController {
 	@PostMapping("/emailValid")
 	@ResponseBody
 	public String verifyEmail(@RequestParam("email") String email) {
+  logger.info("estoreproduct:ForgotController::check email is valid or not");
+
 		 finalemail = email;
 		//call method to get customer with given email
 		 cust = cdao.getCustomerByEmail(email);
@@ -47,6 +54,7 @@ public class ForgotController {
 	@PostMapping("/otpAction")
 	@ResponseBody
 	public String sendOTP(@RequestParam("email") String email) {
+				  logger.info("estoreproduct:ForgotController::send otp ");
 		 finalemail = email;
 		//send mail by generating the otp
 		 generateotp = (new emailSend()).sendEmail(email);
@@ -59,7 +67,8 @@ public class ForgotController {
 	@PostMapping("/validateOTP")
 	@ResponseBody
 	public String validateOTP(@RequestParam("otp12") String otp) {
-	  if (otp.equals(generateotp)) {
+	 logger.info("estoreproduct:ForgotController::validate the otp");
+  if (otp.equals(generateotp)) {
 		  //getting the time of otp submitted
 	        java.time.LocalDateTime t2 = java.time.LocalDateTime.now();
 		  //find the difference and validate the otp
@@ -80,6 +89,7 @@ public class ForgotController {
         //url mapping for saving new user password
 	@RequestMapping(value = "/updatepwd")
 	public String updateUserNewPassword(@RequestParam("psd2") String p2, Model model) {
+				  logger.info("estoreproduct:ForgotController:: update  the password in database ");
 		//updating user password in database
 		cdao.updatePassword(p2, finalemail);
 
