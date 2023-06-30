@@ -11,10 +11,15 @@ import org.springframework.stereotype.Component;
 import eStoreProduct.model.ServicableRegionMapper;
 import eStoreProduct.model.ServiceableRegion;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Component
 public class ServicableRegionDAOImp implements ServicableRegionDAO {
 	private String getPincodes = "select * from slam_regions";
 	JdbcTemplate jdbcTemplate;
+	private static final Logger logger = 
+			LoggerFactory.getLogger(ServicableRegionDAOImp.class);
 
 	@Autowired
 	public ServicableRegionDAOImp(DataSource dataSource) {
@@ -24,7 +29,8 @@ public class ServicableRegionDAOImp implements ServicableRegionDAO {
 
 	@Override
 	public boolean getValidityOfPincode(int pincode) {
-		// TODO Auto-generated method stub
+		//method to get check the pincode validation
+		logger.info("eStoreProduct:DAO:ServicableRegionDAOImp:checking the pincode validation");
 		List<ServiceableRegion> rg = jdbcTemplate.query(getPincodes, new ServicableRegionMapper());
 		for (ServiceableRegion r : rg) {
 			if (pincode >= r.getSrrgPinFrom() && pincode <= r.getSrrgPinTo()) {
