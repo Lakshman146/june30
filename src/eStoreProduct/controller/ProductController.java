@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import eStoreProduct.DAO.ProductDAO;
 import eStoreProduct.model.Category;
 import eStoreProduct.model.custCredModel;
@@ -25,6 +28,8 @@ import eStoreProduct.utility.ProductStockPrice;
 public class ProductController {
 
 	private ProductDAO pdaoimp = null;
+	private static final Logger logger = 
+			LoggerFactory.getLogger(customerOrderController.class);
 
 	@Autowired
 	public ProductController(ProductDAO productdao) {
@@ -34,6 +39,7 @@ public class ProductController {
 	@GetMapping("/CategoriesServlet")
 	@ResponseBody
 	public String displayCategories(Model model) {
+		logger.info("eStoreProduct:Product Controller:displaying all the categories");
 		List<Category> categories = pdaoimp.getAllCategories();
 		StringBuilder htmlContent = new StringBuilder();
 		htmlContent.append("<option disabled selected>Select Product category</option>");
@@ -48,11 +54,12 @@ public class ProductController {
 	@PostMapping("/categoryProducts")
 	public String showCategoryProducts(@RequestParam(value = "category_id", required = false) int categoryId,
 			Model model) {
-
 		List<ProductStockPrice> products;
 		if (categoryId != 0) {
+		logger.info("eStoreProduct:Product Controller:get products of selected categories");
 			products = pdaoimp.getProductsByCategory(categoryId);
 		} else {
+			logger.info("eStoreProduct:Product Controller:displaying all no matched category items present");
 			products = pdaoimp.getAllProducts();
 		}
 		model.addAttribute("products", products);
@@ -61,6 +68,7 @@ public class ProductController {
 //display the all products method
 	@GetMapping("/productsDisplay")
 	public String showAllProducts(Model model) {
+		logger.info("eStoreProduct:Product Controller:displaying initially all the products ");
 		List<ProductStockPrice> products = pdaoimp.getAllProducts();
 model.addAttribute("products", products);
 return "productCatalog";
@@ -69,6 +77,7 @@ return "productCatalog";
 	@RequestMapping(value = "/prodDescription", method = RequestMethod.GET)
 	public String getSignUpPage(@RequestParam(value = "productId", required = false) int productId, Model model,
 			HttpSession session) {
+		logger.info("eStoreProduct:Product Controller:getting product by id to display the product description for logged in customer");
 		ProductStockPrice product = pdaoimp.getProductById(productId);
 		model.addAttribute("oneproduct", product);
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
@@ -78,7 +87,8 @@ return "productCatalog";
        //Individual products details
 	@GetMapping("/products/{productId}")
 	public String showProductDetails(@PathVariable int productId, Model model) {
-
+		
+		logger.info("eStoreProduct:Product Controller:getting product by id to display the product description for public user");
 		ProductStockPrice product = pdaoimp.getProductById(productId);
 		model.addAttribute("product", product);
 		return "productDetails";
@@ -86,6 +96,7 @@ return "productCatalog";
 	// Filter the products based on pricc
 	@RequestMapping(value = "/sortProducts", method = RequestMethod.POST)
 	public String sortProducts(@RequestParam("sortOrder") String sortOrder, Model model) {
+		logger.info("eStoreProduct:Product Controller:sorting the products according to the high to low selected");
 		// Sort the products based on the selected sorting option
 		List<ProductStockPrice> productList = pdaoimp.getAllProducts();
 
@@ -99,6 +110,7 @@ return "productCatalog";
 	// Filter the products based on price range
 	@RequestMapping(value = "/filterProducts", method = RequestMethod.POST)
 	public String getFilteredProducts(@RequestParam("priceRange") String priceRange, Model model) {
+		logger.info("eStoreProduct:Product Controller:displaying the products for price range selected");
 		double minPrice;
 		double maxPrice;
 		List<ProductStockPrice> productList = pdaoimp.getAllProducts();
@@ -128,6 +140,7 @@ return "productCatalog";
 	// Get the search products method
 	@GetMapping("/searchProducts")
 	public String searchProducts(@RequestParam("search") String search, Model model) {
+		logger.info("eStoreProduct:Product Controller:getting the products according to the searched context");
 		List<ProductStockPrice> productList = pdaoimp.searchproducts(search); // Assuming the method name is
 		model.addAttribute("products", productList);
 		return "productCatalog"; // Assuming "productCatalog" is the name of your view file
@@ -136,6 +149,7 @@ return "productCatalog";
 	@PostMapping("/checkPincode")
 	@ResponseBody
 	public String checkPincode(@RequestParam("pincode") int pincode) {
+		logger.info("eStoreProduct:Product Controller:checking the avilability of the pincode given by the customer");
 		boolean isValid = pdaoimp.isPincodeValid(pincode);
 		return String.valueOf(isValid);
 	}
