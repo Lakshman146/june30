@@ -48,6 +48,7 @@ public class CustomerController {
 	List<ProductStockPrice> product2 = new ArrayList<ProductStockPrice>();
 	orderModel om;
 	WalletCalculationBLL obj;
+	private static final Logger logger = LoggerFactory.getLogger(CustomerController.class);
 
 	@Autowired
 	public CustomerController(cartDAO cartdao, customerDAO customerdao, StockUpdaterDAO stckdao, orderModel om,
@@ -67,7 +68,9 @@ public class CustomerController {
 
 	// called when user clicks on profile
 	@RequestMapping(value = "/profilePage")
-	public String sendProfilePage(Model model, HttpSession session) {
+	public String sendProfilePage(Model model, HttpSession session) 
+	logger.info("estoreproduct:customer controller::profile page");
+
 		// Retrieve customer information from the session
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 
@@ -81,6 +84,7 @@ public class CustomerController {
 	public String userupdate(@ModelAttribute("Customer") custCredModel cust, Model model, HttpSession session) {
 		// Update the customer information in the database
 		cdao.updatecustomer(cust);
+                    	logger.info("estoreproduct:customer controller::update the customer profile");
 
 		// Retrieve the updated customer information
 		custCredModel custt = cdao.getCustomerById(cust.getCustId());
@@ -94,6 +98,8 @@ public class CustomerController {
 	// for payment fair in the cart
 	@GetMapping("/buycartitems")
 	public String confirmbuycart(Model model, HttpSession session) {
+	logger.info("estoreproduct:customer controller::customer buying the cart items");
+
 		// Retrieve customer information from the session
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		if (cust1 != null) {
@@ -120,6 +126,7 @@ public class CustomerController {
 	@GetMapping("/getOrderId")
 	@ResponseBody
 	public String getOrderId(@RequestParam(value = "amt") double amt) {
+    logger.info("estoreproduct:customer controller::getting order id");
 
 		double amountInPaisa = amt;
 
@@ -128,20 +135,6 @@ public class CustomerController {
 		return orderId;
 	}
 
-	/*
-	 * // adding customer shipment address
-	 * 
-	 * @PostMapping("/confirmShipmentAddress")
-	 * 
-	 * @ResponseBody public String confirm(@RequestParam(value = "mobile") String mobile,
-	 * 
-	 * @RequestParam(value = "custsaddress") String custsaddress,
-	 * 
-	 * @RequestParam(value = "spincode") String spincode, Model model, HttpSession session) { custCredModel cust1 =
-	 * (custCredModel) session.getAttribute("customer"); custCredModel cust2 = new custCredModel();
-	 * cust2.setCustMobile(mobile); cust2.setCustSAddress(custsaddress); cust2.setCustPincode(spincode);
-	 * session.setAttribute("cust2", cust2); return "OK"; }
-	 */
 
 	// updating the customers's shipping address
 	@PostMapping("/updateshipment")
@@ -149,6 +142,7 @@ public class CustomerController {
 	public String handleFormSubmission(@RequestParam(value = "name") String name,
 			@RequestParam(value = "custSAddress") String caddress, @RequestParam(value = "custSpincode") String pincode,
 			HttpSession session) {
+			logger.info("estoreproduct:customer controller::update the customers's shipping address ");
 		custCredModel cust = (custCredModel) session.getAttribute("customer");
 		// checks whether the pincode is valid or not
 		boolean isValid = pdaoimp.isPincodeValid(Integer.parseInt(pincode));
@@ -172,6 +166,7 @@ public class CustomerController {
 	@PostMapping(value = "/invoice")
 	public String invoice(@RequestParam("paymentReference") String id, @RequestParam("total") String total, Model model,
 			HttpSession session, @Validated orderModel om) {
+  logger.info("estoreproduct:customer controller::after payment completed showing invoice ");
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		// gets wallet amount of user
 		wallet Wallet = wdao.getWalletAmount(cust1.getCustId());
@@ -210,6 +205,8 @@ public class CustomerController {
 	public String buythisproduct(@RequestParam(value = "productId", required = true) int productId,
 			@RequestParam(value = "qty", required = true) int qty, Model model, HttpSession session)
 			throws NumberFormatException, SQLException {
+		  logger.info("estoreproduct:customer controller::customer want to buy the individual product");
+
 		product2.clear();
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		// calculating the fare
@@ -218,6 +215,7 @@ public class CustomerController {
 
 		buytype = "individual";
 		// adding wallet amount
+		  logger.info("estoreproduct:customer controller::getting wallet amount and add as model attribute ");
 		wallet Wallet = wdao.getWalletAmount(cust1.getCustId());
 		model.addAttribute("Wallet", Wallet);
 
@@ -231,6 +229,8 @@ public class CustomerController {
 	@ResponseBody
 	public String buyproduct(Model model, HttpSession session) throws NumberFormatException, SQLException {
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
+		  logger.info("estoreproduct:customer controller::checking customer is login or not ");
+
 		if (cust1 != null) {
 			return "true";
 		} else {
@@ -238,12 +238,13 @@ public class CustomerController {
 		}
 	}
 
-	// method for checking the user entered wallet amount
+	// method for checking  wallet amount
 	@GetMapping("/wallet")
 	@ResponseBody
 	public String wallet(@RequestParam(value = "wallet", required = true) double walletamt,
 			@RequestParam(value = "orderamt", required = true) double ordamt, Model model, HttpSession session)
 			throws NumberFormatException, SQLException, Emptywalletexception {
+		  logger.info("estoreproduct:customer controller::user selected the wallet option");
 		custCredModel cust1 = (custCredModel) session.getAttribute("customer");
 		// method to get the customer actual wallet amount
 		wallet Wallet = wdao.getWalletAmount(cust1.getCustId());
